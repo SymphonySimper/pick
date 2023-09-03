@@ -3,31 +3,41 @@
 	import SmallButton from '../components/SmallButton.svelte';
 	let chooseRandom = false;
 
-	function removeChoice(index: any) {
+	function removeChoice(index: number) {
 		choices.remove(index);
 		console.log('Hello');
 	}
 
 	let addValue: string;
 
+	function changePadding() {
+		const elements = document.querySelectorAll('input');
+		const elementCount = elements.length;
+		if (elementCount > 8) {
+			document.querySelector('.container')?.setAttribute('style', 'padding: 8rem 0;');
+		}
+		elements[elementCount - 1].scrollIntoView();
+	}
+
 	function addChoice() {
 		if (addValue != '') {
 			choices.add(addValue);
 			addValue = '';
+			changePadding();
 		}
 	}
 </script>
 
-<div class="container">
+<div class="container" id={`${chooseRandom && 'result'}`}>
 	{#if !chooseRandom}
-		<p>{$choices}</p>
+		<h1>{$choices}</h1>
 		{#each Object.entries($choices) as [index, choice] (index)}
 			<div class="choice">
 				<input type="text" bind:value={choice} />
 				<SmallButton
 					text="x"
 					onClick={() => {
-						removeChoice(index);
+						removeChoice(Number(index));
 					}}
 				/>
 			</div>
@@ -44,13 +54,28 @@
 		</div>
 	{:else}
 		<p>The chosen one is</p>
-		<h1>{$choices[Math.floor(Math.random() * $choices.length)]}</h1>
+		<div class="chosen">{$choices[Math.floor(Math.random() * $choices.length)]}</div>
 	{/if}
 
-	<button class="cta" on:click={() => (chooseRandom = !chooseRandom)}>PICK</button>
+	<div class="options">
+		<button class="cta" on:click={() => (chooseRandom = !chooseRandom)}>PICK</button>
+		<button class="cta" on:click={choices.reset}>RESET</button>
+	</div>
 </div>
 
 <style>
+	h1 {
+		position: fixed;
+		margin: 0;
+		padding: 1rem 0;
+		z-index: 10;
+		border: 0;
+		top: 0;
+		background: var(--color-black);
+		border-bottom: 1px solid var(--color-gray);
+		width: 100%;
+		text-align: center;
+	}
 	.container {
 		display: flex;
 		flex-direction: column;
@@ -59,6 +84,10 @@
 		min-width: 100vmax;
 		justify-content: center;
 		align-items: center;
+	}
+
+	#result {
+		padding: 0;
 	}
 
 	input {
@@ -90,22 +119,38 @@
 		border: 2px dashed var(--color-gray);
 	}
 
-	.cta {
+	.options {
 		position: fixed;
-		width: 10rem;
-		height: 4rem;
 		z-index: 10;
 		bottom: 0;
-		margin: 4rem 0;
-		border: 0;
-		border-radius: 4rem;
-		background: var(--color-white);
+		border-top: 1px solid var(--color-gray);
+		background: var(--color-black);
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-content: center;
+	}
+
+	.cta {
+		width: 10rem;
+		height: 4rem;
+		color: var(--color-white);
+		background: var(--color-black);
 		font-family: Poppins;
 		font-size: 1.25rem;
 		font-style: normal;
 		font-weight: 600;
 		line-height: normal;
 		text-transform: uppercase;
-		color: var(--color-black);
+		border: 0;
+		border-right: 1px solid var(--color-gray);
+	}
+
+	.cta:first-child {
+		border-left: 1px solid var(--color-gray);
+	}
+	.chosen {
+		font-family: 'Poppins';
+		font-size: 4rem;
 	}
 </style>
