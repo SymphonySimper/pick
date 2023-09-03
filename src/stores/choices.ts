@@ -9,6 +9,10 @@ function createChoices() {
     set,
     update,
     add: (choice: string) => update((c) => [...c, choice]),
+    remove: (index: number) => update((c) => {
+      c.splice(index, 1)
+      return [...c];
+    }),
     reset: () => set(defaultChoice)
   }
 }
