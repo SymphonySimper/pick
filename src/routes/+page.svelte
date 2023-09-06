@@ -31,7 +31,7 @@
 <div class="container" id={`${chooseRandom && 'result'}`}>
 	{#if !chooseRandom}
 		<h1>{$choices}</h1>
-		{#each Object.entries($choices) as [index, choice] (index)}
+		{#each $choices as choice, index (index)}
 			<div class="choice">
 				<input type="text" bind:value={choice} />
 				<SmallButton
